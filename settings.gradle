@@ -1,26 +1,25 @@
-$content = @'
-pluginManagement {
-    repositories {
-        google()
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
-
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-
-rootProject.name = "SLED-Studio"
-include ":app"
-'@
-
-[IO.File]::WriteAllText("C:\sled-studio\settings.gradle", $content, (New-Object System.Text.UTF8Encoding($false)))
+$lines = @(
+    'pluginManagement {',
+    '    repositories {',
+    '        google()',
+    '        mavenCentral()',
+    '        gradlePluginPortal()',
+    '    }',
+    '}',
+    '',
+    'dependencyResolutionManagement {',
+    '    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)',
+    '    repositories {',
+    '        google()',
+    '        mavenCentral()',
+    '    }',
+    '}',
+    '',
+    'rootProject.name = "SLED-Studio"',
+    'include ":app"'
+)
+[IO.File]::WriteAllLines("C:\sled-studio\settings.gradle", $lines, (New-Object System.Text.UTF8Encoding($false)))
 
 Write-Host ""
-Write-Host "Новый settings.gradle:"
+Write-Host "=== settings.gradle ==="
 Get-Content C:\sled-studio\settings.gradle
