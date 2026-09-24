@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.22.1)
+project(sled_core CXX)
+add_library(sled_core SHARED jni_bridge.cpp)
+find_library(log-lib log)
+target_link_libraries(sled_core ${log-lib})

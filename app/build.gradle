@@ -1,0 +1,60 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+def localProps = new Properties()
+def localPropsFile = rootProject.file('local.properties')
+if (localPropsFile.exists()) {
+    localPropsFile.withInputStream { localProps.load(it) }
+}
+def customNdkPath = localProps.getProperty('ndk.path')
+def customNdkVersion = localProps.getProperty('ndk.version') ?: '27.2.12479018'
+
+android {
+    namespace 'os.sled.studio'
+    compileSdk 34
+    if (customNdkPath) { ndkPath customNdkPath }
+    ndkVersion customNdkVersion
+
+    defaultConfig {
+        applicationId "os.sled.studio"
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName "0.1.0-mvp"
+        ndk { abiFilters 'arm64-v8a' }
+        externalNativeBuild {
+            cmake {
+                cppFlags '-std=c++17 -O3 -march=armv8.6-a+bf16'
+                arguments '-DANDROID_STL=c++_shared'
+            }
+        }
+    }
+    buildTypes {
+        debug { debuggable true; jniDebuggable true }
+        release { minifyEnabled false }
+    }
+    externalNativeBuild { cmake { path file('src/main/cpp/CMakeLists.txt') } }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+    kotlinOptions { jvmTarget = '17' }
+    buildFeatures { viewBinding true; compose true }
+    composeOptions { kotlinCompilerExtensionVersion '1.5.14' }
+    packaging { jniLibs { useLegacyPackaging = true } }
+}
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.13.1'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    def composeBom = platform('androidx.compose:compose-bom:2024.06.00')
+    implementation composeBom
+    implementation 'androidx.activity:activity-compose:1.9.2'
+    implementation 'androidx.compose.ui:ui'
+    implementation 'androidx.compose.ui:ui-graphics'
+    implementation 'androidx.compose.ui:ui-tooling-preview'
+    implementation 'androidx.compose.material3:material3'
+    implementation 'androidx.compose.material:material-icons-extended'
+    debugImplementation 'androidx.compose.ui:ui-tooling'
+}
